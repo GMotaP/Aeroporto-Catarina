@@ -17,9 +17,9 @@
      SETORES (3 colunas)
      ========================= */
   const setores = [
-    { name: "Setor A", keys: ["pc115", "pc118", "pc121", "pc124"] },
-    { name: "Setor B", keys: ["pc114", "pc117", "pc120", "pc123", "pc126"] },
-    { name: "Setor C", keys: ["pc113", "pc116", "pc122", "pc125"] },
+    { name: "Fase R", keys: ["pc113", "pc116", "pc122", "pc125"] },
+    { name: "Fase S", keys: ["pc114", "pc117", "pc120", "pc123", "pc126"] },
+    { name: "Fase T", keys: ["pc115", "pc118", "pc121", "pc124"] },
   ];
 
   /* =========================
@@ -54,7 +54,7 @@
    */
   function getPaymentLink(key, plug) {
     const upper = String(key || "").toUpperCase();
-    return `https://pay.incharge.app/now/${upper}/${plug}`;
+    return `https://incharge.app/now/${upper}/${plug}`;
   }
 
   function atualizarHorario() {
