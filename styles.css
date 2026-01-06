@@ -272,14 +272,7 @@ h1 {
   grid-auto-rows: minmax(64px, auto);
 }
 
-/* Caso exista .cols-3 (o JS atualmente não aplica), mantém coerência */
-.containerInfo.cols-3 {
-  grid-template-columns: repeat(4, minmax(90px, 1fr));
-  grid-auto-rows: minmax(64px, auto);
-}
-
-/* ✅ AJUSTE CRÍTICO:
-   O <a> é o item do grid. Ele precisa preencher a célula. */
+/* O <a> é o item do grid */
 .containerInfo a {
   display: block;
   width: 100%;
@@ -288,7 +281,22 @@ h1 {
   color: inherit;
 }
 
-/* Card do plug: FLUIDO e preenchendo o <a> */
+/* ✅ FAZER PREENCHER A LARGURA DISPONÍVEL CONFORME QUANTIDADE DE PLUGS */
+.containerInfo > a:only-child {
+  grid-column: 1 / -1; /* 1 item = ocupa 100% */
+}
+
+.containerInfo > a:nth-last-child(2):first-child,
+.containerInfo > a:nth-last-child(2):first-child ~ a {
+  grid-column: span 2; /* 2 itens = 50% cada (em grid 4 colunas) */
+}
+
+.containerInfo > a:nth-last-child(3):first-child,
+.containerInfo > a:nth-last-child(3):first-child ~ a {
+  grid-column: span 1; /* 3 itens = padrão */
+}
+
+/* Card do plug */
 .chargerInfo {
   border-radius: 12px;
   text-align: center;
@@ -303,7 +311,7 @@ h1 {
   box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 
-  /* ✅ Preenche o <a> (que preenche a célula) */
+  /* Preenche o <a> */
   width: 100%;
   height: 100%;
 
@@ -314,6 +322,7 @@ h1 {
   padding: 10px;
   color: #ffffff;
 }
+
 
 @media (hover: hover) {
   .chargerInfo:hover {
