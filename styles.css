@@ -1,5 +1,9 @@
+/* Fonte (opcional — remova se já importa no HTML) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
+/* =========================
+   Variáveis de tema
+   ========================= */
 :root {
   --primary: #ff585b;
   --primary-dark: #e34a4d;
@@ -10,6 +14,7 @@
   --glass: rgba(255, 255, 255, .06);
   --border: rgba(255, 255, 255, .12);
 
+  /* Tokens por status (fácil de trocar tema) */
   --ok-1: #4caf50;  --ok-2: #66bb6a;
   --prep-1: #006400; --prep-2: #228b22;
   --fin-1: #ffd700; --fin-2: #ffeb3b; --fin-text: #1a1a1a;
@@ -17,7 +22,15 @@
   --off-1: #2c2c2c; --off-2: #1a1a1a;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* =========================
+   Reset básico
+   ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html, body { height: 100%; }
 
 body {
@@ -31,6 +44,9 @@ body {
   padding: 16px;
 }
 
+/* =========================
+   Botão Voltar
+   ========================= */
 .btn-back {
   position: fixed;
   top: 14px;
@@ -55,6 +71,7 @@ body {
   }
 }
 
+/* Acessibilidade: foco visível */
 .btn-back:focus-visible,
 .city-column h2 a:focus-visible,
 .containerInfo a:focus-visible,
@@ -64,10 +81,14 @@ body {
   border-radius: 10px;
 }
 
+/* Respeitar usuários com redução de movimento */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
 
+/* =========================
+   Cabeçalho + logo
+   ========================= */
 header {
   display: flex;
   flex-direction: column;
@@ -108,6 +129,9 @@ h1 {
   text-align: center;
 }
 
+/* =========================
+   Legenda
+   ========================= */
 .legend {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -141,6 +165,9 @@ h1 {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
 }
 
+/* =========================
+   Root escalável / layout
+   ========================= */
 .scale-root {
   transform-origin: top center;
   transition: transform .12s ease;
@@ -163,6 +190,9 @@ h1 {
   align-content: start;
 }
 
+/* =========================
+   Cartões de cidade
+   ========================= */
 .city-column {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -208,6 +238,9 @@ h1 {
   }
 }
 
+/* =========================
+   Nome dos locais
+   ========================= */
 .titleCidade {
   color: #ffffff;
   font-size: .9rem;
@@ -222,28 +255,38 @@ h1 {
   box-shadow: inset 0 6px 14px rgba(0, 0, 0, .25), 0 2px 6px rgba(0, 0, 0, .18);
 }
 
+/* =========================
+   Informações dos carregadores
+   ========================= */
+
+/* Grid “tabela” (linhas/colunas), sem mexer no JS */
 .containerInfo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  /* Desktop: 4 colunas (estilo tabela) */
+  grid-template-columns: repeat(4, minmax(90px, 1fr));
 }
 
+/* O JS pode aplicar .cols-3 (quando vier 3 plugs).
+   Aqui mantemos o MESMO grid (não força 3 colunas). */
 .containerInfo.cols-3 {
-  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  grid-template-columns: repeat(4, minmax(90px, 1fr));
 }
 
+/* Link herda a cor do cartão (mantém contraste, ex.: finalizando) */
 .containerInfo a {
   text-decoration: none;
   color: inherit;
 }
 
+/* Card “quadrado” */
 .chargerInfo {
-  padding: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   font-weight: 800;
-  font-size: .88rem;
+  font-size: .86rem;
   letter-spacing: .06em;
   text-transform: uppercase;
   cursor: pointer;
@@ -251,6 +294,19 @@ h1 {
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+
+  /* QUADRADO */
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+
+  /* Tamanho mínimo para não “achatar” */
+  min-height: 92px;
+
+  /* Padding interno mais controlado */
+  padding: 10px;
+
+  /* Cor padrão */
   color: #ffffff;
 }
 
@@ -262,11 +318,28 @@ h1 {
   }
 }
 
-.chargerInfo.is-available { background: linear-gradient(135deg, var(--ok-1), var(--ok-2)); }
-.chargerInfo.is-preparing { background: linear-gradient(135deg, var(--prep-1), var(--prep-2)); }
-.chargerInfo.is-finishing { background: linear-gradient(135deg, var(--fin-1), var(--fin-2)); color: var(--fin-text); }
-.chargerInfo.is-charging  { background: linear-gradient(135deg, var(--chg-1), var(--chg-2)); }
-.chargerInfo.is-offline   { background: linear-gradient(135deg, var(--off-1), var(--off-2)); opacity: .6; }
+/* Cores por status usando tokens */
+.chargerInfo.is-available {
+  background: linear-gradient(135deg, var(--ok-1), var(--ok-2));
+}
+
+.chargerInfo.is-preparing {
+  background: linear-gradient(135deg, var(--prep-1), var(--prep-2));
+}
+
+.chargerInfo.is-finishing {
+  background: linear-gradient(135deg, var(--fin-1), var(--fin-2));
+  color: var(--fin-text);
+}
+
+.chargerInfo.is-charging {
+  background: linear-gradient(135deg, var(--chg-1), var(--chg-2));
+}
+
+.chargerInfo.is-offline {
+  background: linear-gradient(135deg, var(--off-1), var(--off-2));
+  opacity: .6;
+}
 
 .loading {
   text-align: center;
@@ -274,6 +347,7 @@ h1 {
   padding: 8px;
 }
 
+/* Loader com shimmer (opcional) */
 .loading::after {
   content: "";
   display: block;
@@ -289,12 +363,40 @@ h1 {
   100% { background-position: -200% 0; }
 }
 
+/* =========================
+   Responsivo (sem virar 1 coluna cedo)
+   ========================= */
+
+/* Tablets: 3 colunas */
 @media (max-width: 820px) {
   .legend { width: 95%; }
-  .containerInfo { grid-template-columns: 1fr; }
-  .containerInfo.cols-3 { grid-template-columns: 1fr; }
+
+  .containerInfo {
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+  }
+  .containerInfo.cols-3 {
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+  }
 }
 
+/* Celulares: 2 colunas */
+@media (max-width: 520px) {
+  .containerInfo {
+    grid-template-columns: repeat(2, minmax(90px, 1fr));
+  }
+  .containerInfo.cols-3 {
+    grid-template-columns: repeat(2, minmax(90px, 1fr));
+  }
+
+  .chargerInfo {
+    min-height: 84px;
+    font-size: .82rem;
+  }
+}
+
+/* Container Query extra para cartões muito estreitos */
 @container (max-width: 360px) {
-  .containerInfo { grid-template-columns: 1fr; }
+  .containerInfo {
+    grid-template-columns: repeat(2, minmax(90px, 1fr));
+  }
 }
