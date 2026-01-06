@@ -14,7 +14,7 @@
   --glass: rgba(255, 255, 255, .06);
   --border: rgba(255, 255, 255, .12);
 
-  /* Tokens por status (fácil de trocar tema) */
+  /* Tokens por status */
   --ok-1: #4caf50;  --ok-2: #66bb6a;
   --prep-1: #006400; --prep-2: #228b22;
   --fin-1: #ffd700; --fin-2: #ffeb3b; --fin-text: #1a1a1a;
@@ -191,7 +191,7 @@ h1 {
 }
 
 /* =========================
-   Cartões de cidade
+   Cartões de setor (colunas)
    ========================= */
 .city-column {
   background: var(--glass);
@@ -259,29 +259,32 @@ h1 {
    Informações dos carregadores
    ========================= */
 
-/* Grid “tabela” (linhas/colunas), sem mexer no JS */
+/* Grid “tabela” */
 .containerInfo {
   display: grid;
   gap: 10px;
   margin-bottom: 12px;
 
-  /* Desktop: 4 colunas (estilo tabela) */
+  /* Desktop: 4 colunas */
   grid-template-columns: repeat(4, minmax(90px, 1fr));
+
+  /* Linha automática: permite cards preencherem a célula */
+  grid-auto-rows: minmax(64px, auto);
 }
 
-/* O JS pode aplicar .cols-3 (quando vier 3 plugs).
-   Aqui mantemos o MESMO grid (não força 3 colunas). */
+/* Caso exista .cols-3 (o JS atualmente não aplica), mantém coerência */
 .containerInfo.cols-3 {
   grid-template-columns: repeat(4, minmax(90px, 1fr));
+  grid-auto-rows: minmax(64px, auto);
 }
 
-/* Link herda a cor do cartão (mantém contraste, ex.: finalizando) */
+/* Link herda a cor do cartão */
 .containerInfo a {
   text-decoration: none;
   color: inherit;
 }
 
-/* Card “quadrado” */
+/* Card do plug: AGORA FLUIDO (não quadrado) */
 .chargerInfo {
   border-radius: 12px;
   text-align: center;
@@ -292,33 +295,33 @@ h1 {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+
   box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 
-  /* QUADRADO */
-  aspect-ratio: 1 / 1;
-  display: grid;
-  place-items: center;
+  /* Preenche a célula do grid */
+  width: 100%;
+  height: 100%;
 
-  /* Tamanho mínimo para não “achatar” */
-  min-height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  /* Padding interno mais controlado */
+  /* Padding controlado */
   padding: 10px;
 
-  /* Cor padrão */
   color: #ffffff;
 }
 
 @media (hover: hover) {
   .chargerInfo:hover {
-    transform: scale(1.035);
+    transform: scale(1.02);
     box-shadow: 0 8px 22px rgba(0, 0, 0, .32);
     filter: brightness(1.05);
   }
 }
 
-/* Cores por status usando tokens */
+/* Cores por status */
 .chargerInfo.is-available {
   background: linear-gradient(135deg, var(--ok-1), var(--ok-2));
 }
@@ -341,6 +344,7 @@ h1 {
   opacity: .6;
 }
 
+/* Loading */
 .loading {
   text-align: center;
   color: #ffe3e4;
@@ -364,7 +368,7 @@ h1 {
 }
 
 /* =========================
-   Responsivo (sem virar 1 coluna cedo)
+   Responsivo
    ========================= */
 
 /* Tablets: 3 colunas */
@@ -373,9 +377,11 @@ h1 {
 
   .containerInfo {
     grid-template-columns: repeat(3, minmax(90px, 1fr));
+    grid-auto-rows: minmax(62px, auto);
   }
   .containerInfo.cols-3 {
     grid-template-columns: repeat(3, minmax(90px, 1fr));
+    grid-auto-rows: minmax(62px, auto);
   }
 }
 
@@ -383,14 +389,16 @@ h1 {
 @media (max-width: 520px) {
   .containerInfo {
     grid-template-columns: repeat(2, minmax(90px, 1fr));
+    grid-auto-rows: minmax(58px, auto);
   }
   .containerInfo.cols-3 {
     grid-template-columns: repeat(2, minmax(90px, 1fr));
+    grid-auto-rows: minmax(58px, auto);
   }
 
   .chargerInfo {
-    min-height: 84px;
     font-size: .82rem;
+    padding: 9px;
   }
 }
 
@@ -398,5 +406,6 @@ h1 {
 @container (max-width: 360px) {
   .containerInfo {
     grid-template-columns: repeat(2, minmax(90px, 1fr));
+    grid-auto-rows: minmax(58px, auto);
   }
 }
