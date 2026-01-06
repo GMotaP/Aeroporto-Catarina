@@ -3,30 +3,30 @@
   const updateTimeElement = document.getElementById("last-update");
   const scaleRoot = document.getElementById("scale-root");
 
+  // Guardas: se algum elemento não existir, loga e aborta
   if (!locationsContainer || !updateTimeElement || !scaleRoot) {
-    console.error("[INCHARGE] Elementos base não encontrados.",
-      { hasLocations: !!locationsContainer, hasUpdate: !!updateTimeElement, hasScale: !!scaleRoot });
+    console.error("[INCHARGE] Elementos base não encontrados.", {
+      hasLocations: !!locationsContainer,
+      hasUpdate: !!updateTimeElement,
+      hasScale: !!scaleRoot,
+    });
     return;
   }
 
-  // =========================
-  // CONFIGURAÇÃO DO ÚNICO LOCAL
-  // =========================
-  const SITE_TITLE = "Unidade - Carregadores"; // opcional (se quiser usar em algum lugar depois)
-  const PLACE_NAME = "Carregadores do Local";  // título do card
-  const PLACE_MAP_LINK = ""; // se quiser, cole um link do Google Maps aqui (ou deixe vazio)
-
-  const chargersKeys = [
-    "pc113","pc116","pc122","pc125",
-    "pc114","pc117","pc120","pc123","pc126",
-    "pc115","pc118","pc121","pc124"
+  /* =========================
+     SETORES (3 colunas)
+     ========================= */
+  const setores = [
+    { name: "Setor A", keys: ["pc115", "pc118", "pc121", "pc124"] },
+    { name: "Setor B", keys: ["pc114", "pc117", "pc120", "pc123", "pc126"] },
+    { name: "Setor C", keys: ["pc113", "pc116", "pc122", "pc125"] },
   ];
 
-  // =========================
-  // HELPERS
-  // =========================
+  /* =========================
+     Helpers
+     ========================= */
   function isOnlineValue(online) {
-    return (online === 1 || online === true || online === "1");
+    return online === 1 || online === true || online === "1";
   }
 
   function getStatusClass(status, online) {
@@ -34,18 +34,23 @@
 
     const s = String(status || "").trim().toLowerCase();
     switch (s) {
-      case "available": return "is-available";
-      case "preparing": return "is-preparing";
-      case "finishing": return "is-finishing";
-      case "charging":  return "is-charging";
-      default:          return "is-available";
+      case "available":
+        return "is-available";
+      case "preparing":
+        return "is-preparing";
+      case "finishing":
+        return "is-finishing";
+      case "charging":
+        return "is-charging";
+      default:
+        return "is-available";
     }
   }
 
   /**
    * Link de pagamento:
-   * - Eu mantive o padrão usado anteriormente (pay.incharge.app).
-   * - Se TODOS esses PCs devem ir para pay4charge.com, me diga e eu ajusto em 10s.
+   * Mantido no padrão pay.incharge.app (igual ao seu último site).
+   * Se algum desses PCs precisar ir para pay4charge.com, me diga que eu ajusto.
    */
   function getPaymentLink(key, plug) {
     const upper = String(key || "").toUpperCase();
@@ -54,14 +59,18 @@
 
   function atualizarHorario() {
     const agora = new Date();
-    const hora = agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const hora = agora.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
     const data = agora.toLocaleDateString("pt-BR");
     updateTimeElement.textContent = `Última atualização: ${data} às ${hora}`;
   }
 
-  // Escala automática para caber no viewport (mantido)
+  /* Escala automática para caber no viewport */
   function fitToViewport() {
-    scaleRoot.style.transform = `scale(1)`;
+    scaleRoot.style.transform = "scale(1)";
     const margin = 8;
 
     const rect = scaleRoot.getBoundingClientRect();
@@ -77,73 +86,64 @@
     scaleRoot.style.transform = `scale(${scale})`;
   }
 
-  function createSinglePlaceColumn(globalData) {
+  /* =========================
+     Renderização (3 colunas)
+     ========================= */
+  function renderSetores(data) {
     locationsContainer.innerHTML = "";
 
-    const col = document.createElement("div");
-    col.className = "city-column";
+    setores.forEach((setor) => {
+      const col = document.createElement("div");
+      col.className = "city-column";
 
-    const h2 = document.createElement("h2");
-    if (PLACE_MAP_LINK && PLACE_MAP_LINK.trim()) {
-      const a = document.createElement("a");
-      a.href = PLACE_MAP_LINK;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.textContent = PLACE_NAME;
-      h2.appendChild(a);
-    } else {
-      h2.textContent = PLACE_NAME;
-    }
-    col.appendChild(h2);
+      const h2 = document.createElement("h2");
+      h2.textContent = setor.name;
+      col.appendChild(h2);
 
-    chargersKeys.forEach((key) => {
-      const t = document.createElement("h3");
-      t.className = "titleCidade";
-      t.textContent = String(key).toUpperCase();
-      col.appendChild(t);
+      setor.keys.forEach((key) => {
+        const t = document.createElement("h3");
+        t.className = "titleCidade";
+        t.textContent = String(key).toUpperCase();
+        col.appendChild(t);
 
-      const container = document.createElement("div");
-      container.className = "containerInfo";
+        const container = document.createElement("div");
+        container.className = "containerInfo";
 
-      const chargers = Array.isArray(globalData[key]) ? globalData[key] : [];
+        const chargers = Array.isArray(data[key]) ? data[key] : [];
 
-      if (chargers.length === 3) {
-        container.classList.add("cols-3");
-      }
+        if (chargers.length === 0) {
+          const p = document.createElement("p");
+          p.className = "loading";
+          p.textContent = "Carregando dados...";
+          container.appendChild(p);
+        } else {
+          chargers.forEach((ch) => {
+            const linkA = document.createElement("a");
+            linkA.href = getPaymentLink(key, ch.plug);
+            linkA.target = "_blank";
+            linkA.rel = "noopener noreferrer";
 
-      if (chargers.length === 0) {
-        const p = document.createElement("p");
-        p.className = "loading";
-        p.textContent = "Carregando dados...";
-        container.appendChild(p);
-      } else {
-        chargers.forEach((ch) => {
-          const linkA = document.createElement("a");
-          linkA.href = getPaymentLink(key, ch.plug);
-          linkA.target = "_blank";
-          linkA.rel = "noopener noreferrer";
+            const item = document.createElement("div");
+            item.className = "chargerInfo " + getStatusClass(ch.status, ch.online);
+            item.textContent = `Plug ${ch.plug}`;
 
-          const item = document.createElement("div");
-          item.className = "chargerInfo " + getStatusClass(ch.status, ch.online);
-          item.textContent = `Plug ${ch.plug}`;
+            if (!isOnlineValue(ch.online)) item.style.opacity = "0.6";
 
-          if (!isOnlineValue(ch.online)) item.style.opacity = "0.6";
+            linkA.appendChild(item);
+            container.appendChild(linkA);
+          });
+        }
 
-          linkA.appendChild(item);
-          container.appendChild(linkA);
-        });
-      }
+        col.appendChild(container);
+      });
 
-      col.appendChild(container);
+      locationsContainer.appendChild(col);
     });
-
-    locationsContainer.appendChild(col);
   }
 
-  // =========================
-  // FETCH
-  // =========================
-  let globalData = {};
+  /* =========================
+     Fetch de dados
+     ========================= */
   let isFetching = false;
 
   async function getAllData() {
@@ -151,7 +151,10 @@
     isFetching = true;
 
     try {
-      const urls = chargersKeys.map((key) => ({
+      // Lista completa de keys (todos os setores)
+      const allKeys = setores.flatMap((s) => s.keys);
+
+      const urls = allKeys.map((key) => ({
         key,
         url: `https://api.incharge.app/api/v2/now/${key}`,
       }));
@@ -163,7 +166,14 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             const data = await res.json();
-            const parsed = Array.isArray(data) ? data : (Array.isArray(data?.chargers) ? data.chargers : []);
+
+            // Esperamos um array; se vier objeto, tenta pegar uma chave comum
+            const parsed = Array.isArray(data)
+              ? data
+              : Array.isArray(data?.chargers)
+              ? data.chargers
+              : [];
+
             return { key: item.key, data: parsed };
           } catch (err) {
             console.error("[INCHARGE] Falha ao buscar", item.key, err);
@@ -172,10 +182,16 @@
         })
       );
 
-      globalData = {};
-      responses.forEach((r) => { globalData[r.key] = r.data; });
+      // Monta o objeto globalData com o retorno por key
+      const globalData = {};
+      responses.forEach((r) => {
+        globalData[r.key] = r.data;
+      });
 
-      createSinglePlaceColumn(globalData);
+      // Renderiza 3 colunas
+      renderSetores(globalData);
+
+      // Atualiza horário e escala
       atualizarHorario();
       fitToViewport();
     } catch (e) {
