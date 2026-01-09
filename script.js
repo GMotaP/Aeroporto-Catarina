@@ -30,23 +30,32 @@
   }
 
   function getStatusClass(status, online) {
-    if (!isOnlineValue(online)) return "is-offline";
+  const s = String(status || "").trim().toLowerCase();
 
-    const s = String(status || "").trim().toLowerCase();
-    switch (s) {
-      case "available":
-        return "is-available";
-      case "preparing":
-        return "is-preparing";
-      case "finishing":
-        return "is-finishing";
-      case "charging":
-        return "is-charging";
-      default:
-        return "is-available";
-    }
+  // Falhas explícitas da API (prioridade máxima)
+  if (s === "faulted" || s === "unavailable" || s === "error") {
+    return "is-offline";
   }
 
+  // Offline físico/lógico
+  if (!isOnlineValue(online)) {
+    return "is-offline";
+  }
+
+  // Estados normais
+  switch (s) {
+    case "available":
+      return "is-available";
+    case "preparing":
+      return "is-preparing";
+    case "finishing":
+      return "is-finishing";
+    case "charging":
+      return "is-charging";
+    default:
+      return "is-available";
+  }
+}
   /**
    * Link de pagamento:
    * Mantido no padrão pay.incharge.app (igual ao seu último site).
