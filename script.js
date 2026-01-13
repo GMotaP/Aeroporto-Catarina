@@ -17,7 +17,7 @@
      SETORES (3 colunas)
      ========================= */
   const setores = [
-    { name: "Fase R", keys: ["pc113", "pc116", "pc122", "pc125"] },
+    { name: "Fase R", keys: ["pc113", "pc116","pc119", "pc122", "pc125"] },
     { name: "Fase S", keys: ["pc114", "pc117", "pc120", "pc123", "pc126"] },
     { name: "Fase T", keys: ["pc115", "pc118", "pc121", "pc124"] },
   ];
